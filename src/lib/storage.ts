@@ -1,22 +1,44 @@
-// Phase 2: Storage utilities
-// Will implement localStorage logic in future phases
+// Phase 2: Storage utilities with localStorage
 
 export function saveToStorage(key: string, value: any): void {
-  // Phase 2: Implement storage logic
-  console.log("Storage Phase 2");
+  try {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  } catch (error) {
+    console.error("Error saving to storage:", error);
+  }
 }
 
 export function getFromStorage(key: string): any {
-  // Phase 2: Implement retrieval logic
-  return null;
+  try {
+    if (typeof window !== "undefined") {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : null;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error reading from storage:", error);
+    return null;
+  }
 }
 
 export function removeFromStorage(key: string): void {
-  // Phase 2: Implement removal logic
-  console.log("Remove Storage Phase 2");
+  try {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(key);
+    }
+  } catch (error) {
+    console.error("Error removing from storage:", error);
+  }
 }
 
 export function clearStorage(): void {
-  // Phase 2: Clear all storage
-  console.log("Clear Storage Phase 2");
+  try {
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+    }
+  } catch (error) {
+    console.error("Error clearing storage:", error);
+  }
 }

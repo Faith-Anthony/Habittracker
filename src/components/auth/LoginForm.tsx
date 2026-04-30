@@ -4,14 +4,29 @@ import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { login } from "@/lib/auth";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Phase 2: No authentication logic
+    setError("");
+    setLoading(true);
+
+    try {
+      await login(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,6 +61,12 @@ export default function LoginForm() {
           onSubmit={handleSubmit}
           className="bg-white rounded-3xl shadow-lg p-8 space-y-6 border border-purple-100"
         >
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
           {/* Email Input */}
           <div>
             <label
@@ -98,9 +119,10 @@ export default function LoginForm() {
           <button
             type="submit"
             data-testid="auth-login-submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3.5 rounded-xl hover:from-purple-700 hover:to-purple-800 hover:shadow-lg active:scale-95 transition-all duration-200 mt-8"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3.5 rounded-xl hover:from-purple-700 hover:to-purple-800 hover:shadow-lg active:scale-95 transition-all duration-200 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

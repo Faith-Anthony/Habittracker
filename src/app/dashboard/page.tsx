@@ -1,11 +1,45 @@
-import Link from "next/link";
+"use client";
 
-export default function DashboardPage() {
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { logout, getCurrentUser } from "@/lib/auth";
+import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
+import { useState, useEffect } from "react";
+
+function DashboardContent() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const session = getCurrentUser();
+    setUser(session);
+    setIsLoading(false);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div
       data-testid="dashboard-page"
       className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 py-8"
     >
+      {/* Logout Button - Top Right */}
+      <button
+        data-testid="auth-logout-button"
+        onClick={handleLogout}
+        className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200"
+      >
+        Logout
+      </button>
+
       <div className="text-center max-w-md w-full">
         <div className="mb-8 flex justify-center">
           <div className="bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg">
@@ -30,60 +64,55 @@ export default function DashboardPage() {
           Dashboard
         </h1>
 
-        <p className="text-gray-600 text-lg md:text-xl mb-12 leading-relaxed">
+        <p className="text-gray-600 text-lg md:text-xl mb-6 leading-relaxed">
           Welcome to HabitFlow. Your journey to mindful routines starts here.
         </p>
 
-        <p className="text-gray-500 text-sm mb-10">
-          Phase 1 Foundation • Routes Active • UI Structure Complete
-        </p>
+        {user && (
+          <p className="text-purple-600 font-semibold mb-4">
+            Logged in as: {user.email}
+          </p>
+        )}
 
-        {/* Button Group with spacing */}
-        <div className="space-y-3 w-full mb-10">
-          <Link href="/login">
-            <button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold py-3.5 rounded-xl hover:from-purple-700 hover:to-purple-800 hover:shadow-lg active:scale-95 transition-all duration-200">
-              Go to Login
-            </button>
-          </Link>
-          <Link href="/signup">
-            <button className="w-full border-3 border-purple-600 text-purple-600 font-bold py-3.5 rounded-xl hover:bg-purple-50 hover:border-purple-700 active:scale-95 transition-all duration-200">
-              Go to Sign Up
-            </button>
-          </Link>
-          <Link href="/">
-            <button className="w-auto px-6 mx-auto block border-2 border-gray-300 text-gray-600 font-medium py-2.5 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-sm">
-              Back to Home
-            </button>
-          </Link>
-        </div>
+        <p className="text-gray-500 text-sm mb-10">
+          Phase 2 Active • Authentication Complete • Session Protected
+        </p>
 
         {/* Status Info */}
         <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-purple-100">
-          <h2 className="font-bold text-gray-900 mb-4 text-lg">Phase 1 Status</h2>
+          <h2 className="font-bold text-gray-900 mb-4 text-lg">Phase 2 Status</h2>
           <div className="space-y-3 text-sm text-left">
             <div className="flex items-center">
               <span className="text-green-500 mr-3 font-bold">✓</span>
-              <span className="text-gray-700">Routing setup</span>
+              <span className="text-gray-700">User authentication</span>
             </div>
             <div className="flex items-center">
               <span className="text-green-500 mr-3 font-bold">✓</span>
-              <span className="text-gray-700">Component structure</span>
+              <span className="text-gray-700">Session management</span>
             </div>
             <div className="flex items-center">
               <span className="text-green-500 mr-3 font-bold">✓</span>
-              <span className="text-gray-700">UI/UX foundation</span>
+              <span className="text-gray-700">Route protection</span>
             </div>
             <div className="flex items-center">
               <span className="text-green-500 mr-3 font-bold">✓</span>
-              <span className="text-gray-700">TypeScript setup</span>
+              <span className="text-gray-700">localStorage integration</span>
             </div>
             <div className="flex items-center">
               <span className="text-gray-400 mr-3">⊝</span>
-              <span className="text-gray-500">Authentication (Phase 2)</span>
+              <span className="text-gray-500">Habit management (Phase 3)</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }
