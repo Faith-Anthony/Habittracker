@@ -1,12 +1,21 @@
-// Phase 2: URL slug utilities
-// Will implement slug generation logic in future phases
+// Phase 3: URL slug utilities
 
 export function createSlug(text: string): string {
-  // Phase 2: Create URL-friendly slug
-  return text.toLowerCase().replace(/\s+/g, "-");
+  // Create URL-friendly slug
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
+
+export function getHabitSlug(name: string): string {
+  // Generate URL-safe slug from habit name
+  return createSlug(name);
 }
 
 export function parseSlug(slug: string): string {
-  // Phase 2: Parse slug back to readable text
+  // Parse slug back to readable text
   return slug.replace(/-/g, " ");
 }

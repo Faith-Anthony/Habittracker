@@ -1,14 +1,13 @@
-// Phase 2: Type definitions for habits
-// Will implement habit types in future phases
+// Phase 3: Type definitions for habits
 
 export interface Habit {
   id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  frequency?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  userId: string;
+  name: string;
+  description: string;
+  frequency: 'daily';
+  createdAt: string;
+  completions: string[];
 }
 
 export interface HabitEntry {
