@@ -61,6 +61,14 @@ function DashboardContent() {
     }
   };
 
+  const handleUpdateHabit = (updatedHabit: Habit) => {
+    // Update the habits state with the updated habit
+    const updatedHabits = habits.map((h) =>
+      h.id === updatedHabit.id ? updatedHabit : h
+    );
+    setHabits(updatedHabits);
+  };
+
   const handleCancel = () => {
     setShowForm(false);
     setEditingHabit(null);
@@ -206,6 +214,7 @@ function DashboardContent() {
                   habits={habits}
                   onEdit={handleEditHabit}
                   onDelete={handleDeleteHabit}
+                  onUpdate={handleUpdateHabit}
                 />
               </div>
             )

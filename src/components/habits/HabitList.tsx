@@ -7,12 +7,14 @@ interface HabitListProps {
   habits: Habit[];
   onEdit?: (habit: Habit) => void;
   onDelete?: (habitId: string) => void;
+  onUpdate?: (habit: Habit) => void;
 }
 
 export default function HabitList({
   habits,
   onEdit,
   onDelete,
+  onUpdate,
 }: HabitListProps) {
   if (habits.length === 0) {
     return null;
@@ -26,6 +28,7 @@ export default function HabitList({
           habit={habit}
           onEdit={onEdit}
           onDelete={onDelete}
+          onUpdate={onUpdate}
         />
       ))}
     </div>

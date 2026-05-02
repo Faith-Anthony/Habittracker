@@ -1,29 +1,48 @@
-// Phase 2: Streaks utilities
-// Will implement streak calculation logic in future phases
+// Phase 4: Streak calculation logic
 
-import { Streak } from "@/types/habit";
+import { getTodayString, getPreviousDay } from "./dates";
 
-export function calculateStreak(habitId: string): number {
-  // Phase 2: Calculate streak for a habit
-  return 0;
+export function calculateCurrentStreak(
+  completions: string[],
+  today?: string
+): number {
+  const todayStr = today || getTodayString();
+
+  // If no completions, streak is 0
+  if (!completions || completions.length === 0) {
+    return 0;
+  }
+
+  // Remove duplicates and sort in reverse chronological order
+  const uniqueDates = Array.from(new Set(completions)).sort().reverse();
+
+  // If today is not included, streak is 0
+  if (!uniqueDates.includes(todayStr)) {
+    return 0;
+  }
+
+  // Count consecutive days starting from today
+  let streak = 0;
+  let currentDate = todayStr;
+
+  for (const date of uniqueDates) {
+    if (date === currentDate) {
+      streak++;
+      currentDate = getPreviousDay(currentDate);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
 }
 
-export function getStreak(habitId: string): Streak | null {
-  // Phase 2: Get streak data
-  return null;
-}
-
-export function updateStreak(habitId: string): void {
-  // Phase 2: Update streak
-  console.log("Update Streak Phase 2");
-}
-
-export function getTopStreaks(): Streak[] {
-  // Phase 2: Get top streaks
-  return [];
-}
-
-export function resetStreak(habitId: string): void {
-  // Phase 2: Reset streak
-  console.log("Reset Streak Phase 2");
+export function getStreakStatus(streak: number): string {
+  if (streak === 0) {
+    return "No streak";
+  } else if (streak === 1) {
+    return "1 day";
+  } else {
+    return `${streak} days`;
+  }
 }

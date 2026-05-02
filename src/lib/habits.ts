@@ -1,8 +1,9 @@
-// Phase 3: Habits utilities with localStorage
+// Phase 3/4: Habits utilities with localStorage and completion tracking
 
 import { Habit, HabitEntry } from "@/types/habit";
 import { getFromStorage, saveToStorage } from "./storage";
 import { getCurrentUser } from "./auth";
+import { getTodayString } from "./dates";
 
 const HABITS_KEY = "habit-tracker-habits";
 
@@ -72,7 +73,7 @@ export function updateHabit(habitId: string, updates: Partial<Habit>): Habit {
     id: habits[habitIndex].id,
     userId: habits[habitIndex].userId,
     createdAt: habits[habitIndex].createdAt,
-    completions: habits[habitIndex].completions,
+    completions: updates.completions ?? habits[habitIndex].completions,
   };
 
   habits[habitIndex] = updatedHabit;
@@ -87,9 +88,40 @@ export function deleteHabit(habitId: string): void {
   saveHabits(filteredHabits);
 }
 
+export function toggleHabitCompletion(
+  habit: Habit,
+  date: string = getTodayString()
+): Habit {
+  // Create new completions array without mutating original
+  const completions = [...habit.completions];
+  const dateIndex = completions.indexOf(date);
+
+  if (dateIndex > -1) {
+    // Remove date if it exists
+    completions.splice(dateIndex, 1);
+  } else {
+    // Add date if it doesn't exist
+    completions.push(date);
+  }
+
+  // Remove duplicates by using Set
+  const uniqueCompletions = Array.from(new Set(completions));
+
+  // Return updated habit (not mutating original)
+  return {
+    ...habit,
+    completions: uniqueCompletions,
+  };
+}
+
+export function isHabitCompletedToday(habit: Habit): boolean {
+  const today = getTodayString();
+  return habit.completions.includes(today);
+}
+
 export function logHabitEntry(entry: HabitEntry): void {
   // Phase 4: Implement habit entry logic
-  console.log("Log Entry Phase 3+");
+  console.log("Log Entry Phase 4");
 }
 
 export function getHabitEntries(habitId: string): HabitEntry[] {
