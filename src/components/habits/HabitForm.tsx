@@ -67,9 +67,9 @@ export default function HabitForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form data-testid="habit-form" onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-red-100 border-2 border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm" role="alert">
           {error}
         </div>
       )}
@@ -79,7 +79,7 @@ export default function HabitForm({
           htmlFor="habit-name"
           className="block text-sm font-semibold text-gray-700 mb-2"
         >
-          Habit Name
+          Habit Name <span className="text-red-500" aria-label="required">*</span>
         </label>
         <input
           id="habit-name"
@@ -88,8 +88,9 @@ export default function HabitForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g., Morning Meditation"
-          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all text-base"
           required
+          aria-required="true"
         />
       </div>
 
@@ -98,7 +99,7 @@ export default function HabitForm({
           htmlFor="habit-description"
           className="block text-sm font-semibold text-gray-700 mb-2"
         >
-          Description (Optional)
+          Description <span className="text-gray-400 text-sm">(Optional)</span>
         </label>
         <textarea
           id="habit-description"
@@ -107,7 +108,7 @@ export default function HabitForm({
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Why is this habit important to you?"
           rows={3}
-          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all text-base resize-none"
         />
       </div>
 
@@ -123,18 +124,18 @@ export default function HabitForm({
           data-testid="habit-frequency-select"
           value={frequency}
           onChange={(e) => setFrequency(e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all text-base bg-white"
         >
           <option value="daily">Daily</option>
         </select>
       </div>
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <button
           type="submit"
           data-testid="habit-save-button"
           disabled={loading || !name.trim()}
-          className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 focus:from-purple-700 focus:to-purple-800 active:from-purple-800 active:to-purple-900 text-white font-semibold py-2.5 sm:py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
         >
           {loading ? "Saving..." : isEditing ? "Update Habit" : "Create Habit"}
         </button>
@@ -142,7 +143,7 @@ export default function HabitForm({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 border-2 border-gray-300 text-gray-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-all"
+            className="flex-1 border-2 border-gray-300 text-gray-600 font-semibold py-2.5 sm:py-3 rounded-lg hover:bg-gray-50 focus:bg-gray-50 active:bg-gray-100 transition-all text-base"
           >
             Cancel
           </button>

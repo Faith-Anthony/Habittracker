@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -25,7 +26,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>

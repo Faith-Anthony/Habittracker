@@ -19,6 +19,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #f5f3ff 0%, #f9f5ff 100%);
   color: #1f2937;
+  overflow-x: hidden;
 }
 
 code {
@@ -32,6 +33,22 @@ button {
   transition: all 0.3s ease;
 }
 
+/* Visible focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
 input,
 textarea,
 select {
@@ -39,15 +56,15 @@ select {
   transition: all 0.3s ease;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
+input::placeholder,
+textarea::placeholder {
+  color: #d1d5db;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -86,8 +103,26 @@ select:focus {
   animation: float-blow 4s ease-in-out infinite;
 }
 
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media (max-width: 640px) {
   html {
     font-size: 16px;
+  }
+  
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  
+  button, input, textarea, select {
+    font-size: 16px; /* Prevent zoom on mobile */
   }
 }

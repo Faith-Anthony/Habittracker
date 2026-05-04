@@ -81,42 +81,45 @@ function DashboardContent() {
   return (
     <div
       data-testid="dashboard-page"
-      className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 py-8"
+      className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 py-8 sm:px-6"
     >
-      {/* Logout Button - Top Right */}
-      <button
-        data-testid="auth-logout-button"
-        onClick={handleLogoutClick}
-        className="fixed top-6 right-6 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 z-40"
-      >
-        Logout
-      </button>
+      {/* Logout Button - Accessible and Mobile-friendly */}
+      <div className="flex justify-end mb-6 sm:mb-8 z-40">
+        <button
+          data-testid="auth-logout-button"
+          onClick={handleLogoutClick}
+          aria-label="Logout from account"
+          className="bg-red-500 hover:bg-red-600 focus:bg-red-600 active:bg-red-700 text-white font-semibold py-2 px-4 sm:py-2 sm:px-6 rounded-lg transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-sm w-full">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-center mb-4">
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                <span className="text-2xl">⚠️</span>
+                <span className="text-2xl" aria-hidden="true">⚠️</span>
               </div>
             </div>
             <h3 className="text-xl font-bold text-center text-gray-900 mb-2">
               Confirm Logout?
             </h3>
-            <p className="text-gray-600 text-center mb-6">
+            <p className="text-gray-600 text-center mb-6 text-sm sm:text-base">
               Are you sure you want to log out? You will need to sign in again to access your habits.
             </p>
             <div className="space-y-3">
               <button
                 onClick={handleConfirmLogout}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-all"
+                className="w-full bg-red-600 hover:bg-red-700 focus:bg-red-700 active:bg-red-800 text-white font-semibold py-3 rounded-lg transition-all"
               >
                 Yes, Logout
               </button>
               <button
                 onClick={() => setShowLogoutConfirm(false)}
-                className="w-full border-2 border-gray-300 text-gray-600 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-all"
+                className="w-full border-2 border-gray-300 text-gray-600 font-semibold py-3 rounded-lg hover:bg-gray-50 focus:bg-gray-50 active:bg-gray-100 transition-all"
               >
                 Cancel
               </button>
@@ -125,13 +128,13 @@ function DashboardContent() {
         </div>
       )}
 
-      <div className="max-w-2xl mx-auto pt-4">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="mb-6 flex justify-center">
-            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg">
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="mb-4 sm:mb-6 flex justify-center">
+            <div className="bg-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center shadow-lg flex-shrink-0">
               <svg
-                className="w-10 h-10"
+                className="w-8 h-8 sm:w-10 sm:h-10"
                 viewBox="0 0 100 100"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -145,34 +148,35 @@ function DashboardContent() {
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-3">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-2 sm:mb-3">
             My Habits
           </h1>
 
           {user && (
-            <p className="text-purple-600 font-semibold mb-2">
+            <p className="text-purple-600 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
               Welcome, {user.email}
             </p>
           )}
 
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-xs sm:text-sm">
             Build routines, track progress, master your goals
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Create Habit Section */}
           {!showForm ? (
             <button
+              data-testid="create-habit-button"
               onClick={() => setShowForm(true)}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 focus:from-purple-700 focus:to-purple-800 active:from-purple-800 active:to-purple-900 text-white font-semibold py-3 sm:py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <span className="text-xl">+</span>
+              <span className="text-lg sm:text-xl">+</span>
               Create New Habit
             </button>
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-purple-100">
+            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-2 border-purple-100">
               <h2 className="text-lg font-bold text-gray-900 mb-4">
                 {editingHabit ? "Edit Habit" : "Create New Habit"}
               </h2>
@@ -188,18 +192,18 @@ function DashboardContent() {
           {habits.length === 0 && !showForm ? (
             <div
               data-testid="empty-state"
-              className="bg-white rounded-xl shadow-lg p-12 text-center border-2 border-purple-100"
+              className="bg-white rounded-xl shadow-lg p-8 sm:p-12 text-center border-2 border-purple-100"
             >
-              <div className="mb-4 text-5xl">📝</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <div className="mb-4 text-4xl sm:text-5xl" aria-hidden="true">📝</div>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
                 No Habits Yet
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6 text-sm sm:text-base">
                 Create your first habit to get started on your journey to better routines.
               </p>
               <button
                 onClick={() => setShowForm(true)}
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-2 px-6 rounded-lg transition-all"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 focus:from-purple-700 focus:to-purple-800 active:from-purple-800 active:to-purple-900 text-white font-semibold py-2 px-6 rounded-lg transition-all text-sm sm:text-base"
               >
                 Create Habit
               </button>
@@ -207,7 +211,7 @@ function DashboardContent() {
           ) : (
             habits.length > 0 && (
               <div>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                   {habits.length} habit{habits.length !== 1 ? "s" : ""} • Tap to manage
                 </p>
                 <HabitList
