@@ -119,12 +119,12 @@ export function isHabitCompletedToday(habit: Habit): boolean {
   return habit.completions.includes(today);
 }
 
-export function logHabitEntry(entry: HabitEntry): void {
+export function logHabitEntry(_entry: HabitEntry): void {
   // Phase 4: Implement habit entry logic
   console.log("Log Entry Phase 4");
 }
 
-export function getHabitEntries(habitId: string): HabitEntry[] {
+export function getHabitEntries(_habitId: string): HabitEntry[] {
   // Phase 4: Implement habit entries retrieval
   return [];
 }

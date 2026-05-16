@@ -9,6 +9,7 @@ interface User {
   id: string;
   email: string;
   password: string;
+  name?: string;
   createdAt: string;
 }
 
@@ -66,6 +67,7 @@ export async function signup(email: string, password: string, name?: string): Pr
     id: Date.now().toString(),
     email,
     password,
+    name,
     createdAt: new Date().toISOString(),
   };
 
