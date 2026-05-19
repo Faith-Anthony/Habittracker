@@ -8,6 +8,7 @@ import { MdCheckCircle } from "react-icons/md";
 import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signup } from "@/lib/auth";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export default function SignupForm() {
   const [fullName, setFullName] = useState("");
@@ -24,6 +25,14 @@ export default function SignupForm() {
 
     try {
       await signup(email, password, fullName);
+      
+      // Send welcome email (optional - won't block signup if it fails)
+      try {
+        await sendWelcomeEmail(email);
+      } catch (emailError) {
+        console.log("Welcome email not sent (Resend not configured):", emailError);
+      }
+
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
