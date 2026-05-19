@@ -33,7 +33,7 @@ async function sendEmailViaResend(options: EmailOptions): Promise<{ success: boo
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "HabitTracker <noreply@habittracker.dev>",
+        from: "onboarding@resend.dev", // Resend test domain (free tier) - works for testing
         to: options.to,
         subject: options.subject,
         html: options.html,
@@ -41,9 +41,13 @@ async function sendEmailViaResend(options: EmailOptions): Promise<{ success: boo
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Resend API error:", errorData);
       throw new Error(`Resend API error: ${response.statusText}`);
     }
 
+    const result = await response.json();
+    console.log("Email sent successfully:", result.id);
     return { success: true };
   } catch (error) {
     console.error("Error sending email via Resend:", error);

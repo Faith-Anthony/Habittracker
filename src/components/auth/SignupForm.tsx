@@ -7,7 +7,7 @@ import { FaApple } from "react-icons/fa";
 import { MdCheckCircle } from "react-icons/md";
 import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signup } from "@/lib/auth";
+import { signup, signUpWithGoogle, signUpWithApple } from "@/lib/auth";
 import { sendWelcomeEmail } from "@/lib/email";
 
 export default function SignupForm() {
@@ -16,6 +16,7 @@ export default function SignupForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,11 +34,33 @@ export default function SignupForm() {
         console.log("Welcome email not sent (Resend not configured):", emailError);
       }
 
-      router.push("/dashboard");
+      router.push("/auth/verify-email");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setSocialLoading("google");
+    try {
+      const { url } = await signUpWithGoogle();
+      window.location.href = url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google signup failed");
+      setSocialLoading(null);
+    }
+  };
+
+  const handleAppleSignup = async () => {
+    setSocialLoading("apple");
+    try {
+      const { url } = await signUpWithApple();
+      window.location.href = url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Apple signup failed");
+      setSocialLoading(null);
     }
   };
 
@@ -173,17 +196,33 @@ export default function SignupForm() {
         <div className="mt-8 grid grid-cols-2 gap-4">
           <button
             type="button"
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200"
+            onClick={handleGoogleSignup}
+            disabled={socialLoading !== null}
+            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FcGoogle size={24} />
-            <span className="hidden sm:inline">Google</span>
+            {socialLoading === "google" ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-blue-500"></div>
+            ) : (
+              <>
+                <FcGoogle size={24} />
+                <span className="hidden sm:inline">Google</span>
+              </>
+            )}
           </button>
           <button
             type="button"
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200"
+            onClick={handleAppleSignup}
+            disabled={socialLoading !== null}
+            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FaApple size={24} />
-            <span className="hidden sm:inline">Apple</span>
+            {socialLoading === "apple" ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-gray-700"></div>
+            ) : (
+              <>
+                <FaApple size={24} />
+                <span className="hidden sm:inline">Apple</span>
+              </>
+            )}
           </button>
         </div>
 
