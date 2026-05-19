@@ -1,30 +1,30 @@
-// Phase 2: Authentication utilities with localStorage
+// Authentication utilities using Supabase
 
-import { saveToStorage, getFromStorage, removeFromStorage } from "./storage";
-
-const USERS_KEY = "habit-tracker-users";
-const SESSION_KEY = "habit-tracker-session";
-
-interface User {
-  id: string;
-  email: string;
-  password: string;
-  name?: string;
-  createdAt: string;
-}
+import { supabase } from "./supabase";
 
 interface Session {
   userId: string;
   email: string;
 }
 
-export function isAuthenticated(): boolean {
-  const session = getFromStorage(SESSION_KEY);
+export async function isAuthenticated(): Promise<boolean> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   return session !== null;
 }
 
-export function getCurrentUser(): Session | null {
-  return getFromStorage(SESSION_KEY);
+export async function getCurrentUser(): Promise<Session | null> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) return null;
+
+  return {
+    userId: session.user.id,
+    email: session.user.email || "",
+  };
 }
 
 export async function login(email: string, password: string): Promise<Session> {
@@ -32,20 +32,23 @@ export async function login(email: string, password: string): Promise<Session> {
     throw new Error("Email and password are required");
   }
 
-  const users = getFromStorage(USERS_KEY) || [];
-  const user = users.find((u: User) => u.email === email);
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-  if (!user || user.password !== password) {
-    throw new Error("Invalid email or password");
+  if (error) {
+    throw new Error(error.message);
   }
 
-  const session: Session = {
-    userId: user.id,
-    email: user.email,
-  };
+  if (!data.session) {
+    throw new Error("Failed to create session");
+  }
 
-  saveToStorage(SESSION_KEY, session);
-  return session;
+  return {
+    userId: data.session.user.id,
+    email: data.session.user.email || "",
+  };
 }
 
 export async function signup(email: string, password: string, name?: string): Promise<Session> {
@@ -57,32 +60,33 @@ export async function signup(email: string, password: string, name?: string): Pr
     throw new Error("Password must be at least 8 characters");
   }
 
-  const users = getFromStorage(USERS_KEY) || [];
-
-  if (users.some((u: User) => u.email === email)) {
-    throw new Error("User already exists");
-  }
-
-  const newUser: User = {
-    id: Date.now().toString(),
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    name,
-    createdAt: new Date().toISOString(),
+    options: {
+      data: {
+        name: name || "",
+      },
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data.user) {
+    throw new Error("Failed to create user");
+  }
+
+  return {
+    userId: data.user.id,
+    email: data.user.email || "",
   };
-
-  users.push(newUser);
-  saveToStorage(USERS_KEY, users);
-
-  const session: Session = {
-    userId: newUser.id,
-    email: newUser.email,
-  };
-
-  saveToStorage(SESSION_KEY, session);
-  return session;
 }
 
-export function logout(): void {
-  removeFromStorage(SESSION_KEY);
+export async function logout(): Promise<void> {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new Error(error.message);
+  }
 }

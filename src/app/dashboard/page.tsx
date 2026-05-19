@@ -19,29 +19,41 @@ function DashboardContent() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    const session = getCurrentUser();
-    setUser(session);
+    const loadData = async () => {
+      try {
+        const session = await getCurrentUser();
+        setUser(session);
 
-    if (session) {
-      const userHabits = getUserHabits(session.userId);
-      setHabits(userHabits);
-    }
+        if (session) {
+          const userHabits = await getUserHabits(session.userId);
+          setHabits(userHabits);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    setIsLoading(false);
+    loadData();
   }, []);
 
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
-    logout();
-    router.push("/login");
+  const handleConfirmLogout = async () => {
+    try {
+      await logout();
+      router.push("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
-  const handleFormSuccess = () => {
+  const handleFormSuccess = async () => {
     if (user) {
-      const userHabits = getUserHabits(user.userId);
+      const userHabits = await getUserHabits(user.userId);
       setHabits(userHabits);
     }
     setShowForm(false);
@@ -53,11 +65,15 @@ function DashboardContent() {
     setShowForm(true);
   };
 
-  const handleDeleteHabit = (habitId: string) => {
-    deleteHabit(habitId);
-    if (user) {
-      const userHabits = getUserHabits(user.userId);
-      setHabits(userHabits);
+  const handleDeleteHabit = async (habitId: string) => {
+    try {
+      await deleteHabit(habitId);
+      if (user) {
+        const userHabits = await getUserHabits(user.userId);
+        setHabits(userHabits);
+      }
+    } catch (error) {
+      console.error("Error deleting habit:", error);
     }
   };
 

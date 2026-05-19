@@ -9,15 +9,20 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isAuthenticated()) {
-        router.push("/dashboard");
-      } else {
-        router.push("/login");
-      }
-    }, 1000);
+    const checkAuth = async () => {
+      const timer = setTimeout(async () => {
+        const authenticated = await isAuthenticated();
+        if (authenticated) {
+          router.push("/dashboard");
+        } else {
+          router.push("/login");
+        }
+      }, 1000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    };
+
+    checkAuth();
   }, [router]);
 
   return <SplashScreen />;

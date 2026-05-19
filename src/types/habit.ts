@@ -8,6 +8,7 @@ export interface Habit {
   frequency: string;
   createdAt: string;
   completions: string[];
+  color?: string;
 }
 
 export interface HabitEntry {

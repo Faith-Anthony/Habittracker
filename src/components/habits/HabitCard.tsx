@@ -1,9 +1,7 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import { Habit } from "@/types/habit";
 import { createSlug } from "@/lib/slug";
-import { toggleHabitCompletion, isHabitCompletedToday, saveHabits, getHabits } from "@/lib/habits";
+import { toggleHabitCompletion, isHabitCompletedToday } from "@/lib/habits";
 import { calculateCurrentStreak, getStreakStatus } from "@/lib/streaks";
 import { getHabitIcon } from "@/lib/habitIcons";
 
@@ -22,28 +20,24 @@ export default function HabitCard({
 }: HabitCardProps) {
   const slug = createSlug(habit.name);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(isHabitCompletedToday(habit));
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const habitIcon = useMemo(() => getHabitIcon(habit.name), [habit.name]);
   const streak = useMemo(() => calculateCurrentStreak(habit.completions), [habit.completions]);
   const streakText = useMemo(() => getStreakStatus(streak), [streak]);
 
-  const handleCompleteClick = () => {
-    // Toggle completion
-    const updatedHabit = toggleHabitCompletion(habit);
-    setIsCompleted(isHabitCompletedToday(updatedHabit));
+  const handleCompleteClick = async () => {
+    try {
+      // Toggle completion
+      const updatedHabit = await toggleHabitCompletion(habit);
+      setIsCompleted(await isHabitCompletedToday(updatedHabit));
 
-    // Save to storage
-    const allHabits = getHabits();
-    const habitIndex = allHabits.findIndex((h) => h.id === habit.id);
-    if (habitIndex > -1) {
-      allHabits[habitIndex] = updatedHabit;
-      saveHabits(allHabits);
-    }
-
-    // Update parent
-    if (onUpdate) {
-      onUpdate(updatedHabit);
+      // Update parent
+      if (onUpdate) {
+        onUpdate(updatedHabit);
+      }
+    } catch (error) {
+      console.error("Error toggling habit completion:", error);
     }
   };
 

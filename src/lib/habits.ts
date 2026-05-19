@@ -1,123 +1,181 @@
-// Phase 3/4: Habits utilities with localStorage and completion tracking
+// Habits utilities using Supabase
 
 import { Habit, HabitEntry } from "@/types/habit";
-import { getFromStorage, saveToStorage } from "./storage";
+import { supabase, SupabaseHabit, SupabaseCompletion } from "./supabase";
 import { getCurrentUser } from "./auth";
 import { getTodayString } from "./dates";
 
-const HABITS_KEY = "habit-tracker-habits";
+// ==================== HABIT CRUD ====================
 
-export function getHabits(): Habit[] {
-  return getFromStorage(HABITS_KEY) || [];
+export async function getHabits(): Promise<Habit[]> {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("User not authenticated");
+
+  const { data, error } = await supabase
+    .from("habits")
+    .select("*")
+    .eq("user_id", user.userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  // Convert Supabase habits to Habit type with completions
+  const habits = (data as SupabaseHabit[]) || [];
+  return Promise.all(habits.map((h) => convertToHabit(h)));
 }
 
-export function saveHabits(habits: Habit[]): void {
-  saveToStorage(HABITS_KEY, habits);
+export async function getUserHabits(userId: string): Promise<Habit[]> {
+  const { data, error } = await supabase
+    .from("habits")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  const habits = (data as SupabaseHabit[]) || [];
+  return Promise.all(habits.map((h) => convertToHabit(h)));
 }
 
-export function getUserHabits(userId: string): Habit[] {
-  const allHabits = getHabits();
-  return allHabits.filter((habit) => habit.userId === userId);
-}
-
-export function createHabit(data: {
+export async function createHabit(data: {
   name: string;
   description?: string;
   frequency?: string;
-}): Habit {
-  const session = getCurrentUser();
-  if (!session) {
-    throw new Error("User not authenticated");
-  }
+  color?: string;
+}): Promise<Habit> {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("User not authenticated");
 
   if (!data.name || data.name.trim() === "") {
     throw new Error("Habit name is required");
   }
 
-  const newHabit: Habit = {
-    id: Date.now().toString(),
-    userId: session.userId,
-    name: data.name.trim(),
-    description: data.description?.trim() || "",
-    frequency: data.frequency || "daily",
-    createdAt: new Date().toISOString(),
-    completions: [],
-  };
+  const { data: newHabit, error } = await supabase
+    .from("habits")
+    .insert([
+      {
+        user_id: user.userId,
+        name: data.name.trim(),
+        description: data.description?.trim() || "",
+        frequency: data.frequency || "daily",
+        color: data.color || "#7c3aed",
+      },
+    ])
+    .select()
+    .single();
 
-  const habits = getHabits();
-  habits.push(newHabit);
-  saveHabits(habits);
+  if (error) throw error;
 
-  return newHabit;
+  return convertToHabit(newHabit as SupabaseHabit);
 }
 
-export function getHabitById(id: string): Habit | null {
-  const habits = getHabits();
-  return habits.find((habit) => habit.id === id) || null;
+export async function getHabitById(id: string): Promise<Habit | null> {
+  const { data, error } = await supabase
+    .from("habits")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  if (!data) return null;
+
+  return convertToHabit(data as SupabaseHabit);
 }
 
-export function updateHabit(habitId: string, updates: Partial<Habit>): Habit {
-  const habits = getHabits();
-  const habitIndex = habits.findIndex((h) => h.id === habitId);
+export async function updateHabit(habitId: string, updates: Partial<Habit>): Promise<Habit> {
+  const updateData: Record<string, any> = {};
 
-  if (habitIndex === -1) {
-    throw new Error("Habit not found");
-  }
+  if (updates.name) updateData.name = updates.name;
+  if (updates.description !== undefined) updateData.description = updates.description;
+  if (updates.frequency) updateData.frequency = updates.frequency;
+  if (updates.color) updateData.color = updates.color;
 
-  const updatedHabit: Habit = {
-    ...habits[habitIndex],
-    name: updates.name || habits[habitIndex].name,
-    description: updates.description ?? habits[habitIndex].description,
-    frequency: updates.frequency || habits[habitIndex].frequency,
-    // Keep original values
-    id: habits[habitIndex].id,
-    userId: habits[habitIndex].userId,
-    createdAt: habits[habitIndex].createdAt,
-    completions: updates.completions ?? habits[habitIndex].completions,
-  };
+  updateData.updated_at = new Date().toISOString();
 
-  habits[habitIndex] = updatedHabit;
-  saveHabits(habits);
+  const { data, error } = await supabase
+    .from("habits")
+    .update(updateData)
+    .eq("id", habitId)
+    .select()
+    .single();
 
-  return updatedHabit;
+  if (error) throw error;
+
+  return convertToHabit(data as SupabaseHabit);
 }
 
-export function deleteHabit(habitId: string): void {
-  const habits = getHabits();
-  const filteredHabits = habits.filter((h) => h.id !== habitId);
-  saveHabits(filteredHabits);
+export async function deleteHabit(habitId: string): Promise<void> {
+  const { error } = await supabase.from("habits").delete().eq("id", habitId);
+
+  if (error) throw error;
 }
 
-export function toggleHabitCompletion(
+// ==================== COMPLETION TRACKING ====================
+
+export async function toggleHabitCompletion(
   habit: Habit,
   date: string = getTodayString()
-): Habit {
-  // Create new completions array without mutating original
-  const completions = [...habit.completions];
-  const dateIndex = completions.indexOf(date);
+): Promise<Habit> {
+  const isCompleted = habit.completions.includes(date);
 
-  if (dateIndex > -1) {
-    // Remove date if it exists
-    completions.splice(dateIndex, 1);
+  if (isCompleted) {
+    // Remove completion
+    const { error } = await supabase
+      .from("completions")
+      .delete()
+      .eq("habit_id", habit.id)
+      .eq("date", date);
+
+    if (error) throw error;
   } else {
-    // Add date if it doesn't exist
-    completions.push(date);
+    // Add completion
+    const { error } = await supabase
+      .from("completions")
+      .insert([
+        {
+          habit_id: habit.id,
+          date,
+        },
+      ]);
+
+    if (error) throw error;
   }
 
-  // Remove duplicates by using Set
-  const uniqueCompletions = Array.from(new Set(completions));
-
-  // Return updated habit (not mutating original)
-  return {
-    ...habit,
-    completions: uniqueCompletions,
-  };
+  // Return updated habit
+  return getHabitById(habit.id) as Promise<Habit>;
 }
 
-export function isHabitCompletedToday(habit: Habit): boolean {
+export async function isHabitCompletedToday(habit: Habit): Promise<boolean> {
   const today = getTodayString();
   return habit.completions.includes(today);
 }
+
+// ==================== UTILITY FUNCTIONS ====================
+
+async function convertToHabit(supabaseHabit: SupabaseHabit): Promise<Habit> {
+  // Fetch all completions for this habit
+  const { data: completions, error } = await supabase
+    .from("completions")
+    .select("date")
+    .eq("habit_id", supabaseHabit.id);
+
+  if (error) throw error;
+
+  const dates = (completions as SupabaseCompletion[]).map((c) => c.date);
+
+  return {
+    id: supabaseHabit.id,
+    userId: supabaseHabit.user_id,
+    name: supabaseHabit.name,
+    description: supabaseHabit.description || "",
+    frequency: supabaseHabit.frequency,
+    createdAt: supabaseHabit.created_at,
+    completions: dates,
+    color: supabaseHabit.color,
+  };
+}
+
+// ==================== PHASE 4 COMPATIBILITY ====================
 
 export function logHabitEntry(_entry: HabitEntry): void {
   // Phase 4: Implement habit entry logic

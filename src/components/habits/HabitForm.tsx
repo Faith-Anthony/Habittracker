@@ -25,12 +25,19 @@ export default function HabitForm({
   useEffect(() => {
     if (habitId) {
       setIsEditing(true);
-      const habit = getHabitById(habitId);
-      if (habit) {
-        setName(habit.name);
-        setDescription(habit.description);
-        setFrequency(habit.frequency);
-      }
+      const loadHabit = async () => {
+        try {
+          const habit = await getHabitById(habitId);
+          if (habit) {
+            setName(habit.name);
+            setDescription(habit.description);
+            setFrequency(habit.frequency);
+          }
+        } catch (error) {
+          console.error("Error loading habit:", error);
+        }
+      };
+      loadHabit();
     }
   }, [habitId]);
 
@@ -43,13 +50,13 @@ export default function HabitForm({
       let result: Habit;
 
       if (isEditing && habitId) {
-        result = updateHabit(habitId, {
+        result = await updateHabit(habitId, {
           name,
           description,
           frequency,
         } as Partial<Habit>);
       } else {
-        result = createHabit({
+        result = await createHabit({
           name,
           description,
           frequency,

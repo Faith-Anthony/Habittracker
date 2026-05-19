@@ -10,12 +10,23 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push("/login");
-    } else {
-      setIsProtected(true);
-    }
-    setIsLoading(false);
+    const checkAuth = async () => {
+      try {
+        const authenticated = await isAuthenticated();
+        if (!authenticated) {
+          router.push("/login");
+        } else {
+          setIsProtected(true);
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        router.push("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
   if (isLoading) {
