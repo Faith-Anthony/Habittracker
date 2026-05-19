@@ -3,11 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
-import { MdCheckCircle } from "react-icons/md";
-import { TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signup, signUpWithGoogle, signUpWithApple } from "@/lib/auth";
+import { signup, signUpWithGoogle } from "@/lib/auth";
 import { sendWelcomeEmail } from "@/lib/email";
 
 export default function SignupForm() {
@@ -16,7 +13,7 @@ export default function SignupForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
+  const [socialLoading, setSocialLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,34 +40,23 @@ export default function SignupForm() {
   };
 
   const handleGoogleSignup = async () => {
-    setSocialLoading("google");
+    setSocialLoading(true);
     try {
       const { url } = await signUpWithGoogle();
       window.location.href = url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google signup failed");
-      setSocialLoading(null);
-    }
-  };
-
-  const handleAppleSignup = async () => {
-    setSocialLoading("apple");
-    try {
-      const { url } = await signUpWithApple();
-      window.location.href = url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Apple signup failed");
-      setSocialLoading(null);
+      setSocialLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-slate-950 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Header */}
+        {/* Header with Logo */}
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center">
-            <div className="bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg">
+            <div className="bg-white dark:bg-slate-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-2 border-purple-200 dark:border-purple-700">
               <svg className="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 {/* Target/Growth circles */}
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.3" />
@@ -87,16 +73,14 @@ export default function SignupForm() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">HabitFlow</h1>
-          <p className="text-gray-600 text-lg">
-            Begin your journey towards mindful growth and disciplined living.
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h1>
+          <p className="text-gray-600 dark:text-gray-300">Join thousands building better habits</p>
         </div>
 
         {/* Signup Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-3xl shadow-lg p-8 space-y-6 border border-purple-100"
+          className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 space-y-5 border border-purple-200 dark:border-purple-900"
         >
           {/* Error Message */}
           {error && (
@@ -108,7 +92,7 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="fullName"
-              className="block text-sm font-semibold text-gray-700 mb-3"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
             >
               Full Name
             </label>
@@ -117,8 +101,9 @@ export default function SignupForm() {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Alex Morgan"
-              className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+              placeholder="John Doe"
+              required
+              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
             />
           </div>
 
@@ -126,18 +111,18 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-semibold text-gray-700 mb-3"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
             >
               Email Address
             </label>
             <input
               id="email"
               type="email"
-              data-testid="auth-signup-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="alex@example.com"
-              className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+              placeholder="you@example.com"
+              required
+              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
             />
           </div>
 
@@ -145,111 +130,75 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-semibold text-gray-700 mb-3"
+              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
             >
               Password
             </label>
             <input
               id="password"
               type="password"
-              data-testid="auth-signup-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+              required
+              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
             />
-            <p className="text-xs text-gray-500 mt-3 font-medium">
-              Must be at least 8 characters.
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              At least 8 characters
             </p>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            data-testid="auth-signup-submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3.5 rounded-xl hover:from-purple-700 hover:to-purple-800 hover:shadow-lg active:scale-95 transition-all duration-200 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 dark:from-purple-500 dark:to-purple-600 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
-        {/* Features Section */}
-        <div className="mt-10 grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-2xl p-5 border border-purple-100 text-center hover:shadow-lg transition-shadow">
-            <div className="mb-3 flex justify-center">
-              <MdCheckCircle size={32} className="text-green-500" />
-            </div>
-            <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Structured</p>
-            <p className="text-xs text-gray-600 mt-2">Daily Routines</p>
-          </div>
-          <div className="bg-white rounded-2xl p-5 border border-purple-100 text-center hover:shadow-lg transition-shadow">
-            <div className="mb-3 flex justify-center">
-              <TrendingUp size={32} className="text-purple-500" />
-            </div>
-            <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Visual</p>
-            <p className="text-xs text-gray-600 mt-2">Growth Tracking</p>
-          </div>
+        {/* Divider */}
+        <div className="my-6 flex items-center gap-3">
+          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
+          <span className="text-sm text-gray-500 dark:text-gray-400">or</span>
+          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
         </div>
 
-        {/* Social Signup Buttons */}
-        <div className="mt-8 grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={handleGoogleSignup}
-            disabled={socialLoading !== null}
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {socialLoading === "google" ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-blue-500"></div>
-            ) : (
-              <>
-                <FcGoogle size={24} />
-                <span className="hidden sm:inline">Google</span>
-              </>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={handleAppleSignup}
-            disabled={socialLoading !== null}
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {socialLoading === "apple" ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-gray-700"></div>
-            ) : (
-              <>
-                <FaApple size={24} />
-                <span className="hidden sm:inline">Apple</span>
-              </>
-            )}
-          </button>
-        </div>
+        {/* Google Signup Button */}
+        <button
+          type="button"
+          onClick={handleGoogleSignup}
+          disabled={socialLoading}
+          className="w-full flex items-center justify-center gap-3 border-2 border-purple-300 dark:border-purple-700 text-gray-900 dark:text-white font-medium py-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {socialLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-purple-600"></div>
+          ) : (
+            <>
+              <FcGoogle size={24} />
+              <span>Sign up with Google</span>
+            </>
+          )}
+        </button>
 
-        {/* Login Link */}
-        <p className="text-center text-sm text-gray-600 mt-8">
+        {/* Sign In Link */}
+        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-purple-600 font-semibold hover:text-purple-700">
-            Sign In
+          <Link href="/auth/login" className="text-purple-600 dark:text-purple-400 font-semibold hover:text-purple-700 dark:hover:text-purple-300">
+            Sign in
           </Link>
         </p>
 
         {/* Footer Links */}
-        <div className="flex justify-center gap-4 mt-8 text-xs text-gray-500">
-          <Link href="#" className="hover:text-gray-700 transition-colors">
-            Privacy Policy
+        <div className="flex justify-center gap-4 mt-6 text-xs text-gray-500 dark:text-gray-400">
+          <Link href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            Privacy
           </Link>
           <span>•</span>
-          <Link href="#" className="hover:text-gray-700 transition-colors">
-            Terms of Service
+          <Link href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            Terms
           </Link>
-        </div>
-
-        {/* Trust Badge */}
-        <div className="text-center mt-10">
-          <p className="text-xs text-gray-500 font-semibold tracking-wide">
-            TRUSTED BY 50K+ MINDFUL TRACKERS
-          </p>
         </div>
       </div>
     </div>

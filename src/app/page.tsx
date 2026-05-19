@@ -35,8 +35,21 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-40 border-b border-gray-200 dark:border-slate-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">H</span>
+            <div className="w-10 h-10 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow border border-purple-200 dark:border-purple-700">
+              <svg className="w-6 h-6" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                {/* Target/Growth circles */}
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.3" />
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.6" />
+                <circle cx="50" cy="50" r="15" fill="#8B5CF6" />
+                
+                {/* Arrow pointing up - growth indicator */}
+                <path d="M 50 40 L 55 25 L 50 30 L 45 25 Z" fill="#EC4899" />
+                
+                {/* Decorative sparkles */}
+                <circle cx="70" cy="35" r="2" fill="#F472B6" opacity="0.8" />
+                <circle cx="30" cy="35" r="2" fill="#A78BFA" opacity="0.8" />
+                <circle cx="75" cy="50" r="1.5" fill="#F472B6" opacity="0.6" />
+              </svg>
             </div>
             <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               HabitFlow

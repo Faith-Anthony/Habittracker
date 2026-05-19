@@ -3,16 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { login, signInWithGoogle, signInWithApple } from "@/lib/auth";
+import { login, signInWithGoogle } from "@/lib/auth";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
+  const [socialLoading, setSocialLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,34 +30,23 @@ export default function LoginForm() {
   };
 
   const handleGoogleLogin = async () => {
-    setSocialLoading("google");
+    setSocialLoading(true);
     try {
       const { url } = await signInWithGoogle();
       window.location.href = url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google login failed");
-      setSocialLoading(null);
-    }
-  };
-
-  const handleAppleLogin = async () => {
-    setSocialLoading("apple");
-    try {
-      const { url } = await signInWithApple();
-      window.location.href = url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Apple login failed");
-      setSocialLoading(null);
+      setSocialLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-slate-950 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Header */}
+        {/* Header with Logo */}
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center">
-            <div className="bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg">
+            <div className="bg-white dark:bg-slate-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-2 border-purple-200 dark:border-purple-700">
               <svg className="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 {/* Target/Growth circles */}
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.3" />
@@ -75,14 +63,14 @@ export default function LoginForm() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">HabitFlow</h1>
-          <p className="text-gray-600 text-lg">Step into your mindful routine.</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Welcome Back</h1>
+          <p className="text-gray-600 dark:text-gray-300">Sign in to your account</p>
         </div>
 
         {/* Login Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-3xl shadow-lg p-8 space-y-6 border border-purple-100"
+          className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 space-y-6 border border-purple-200 dark:border-purple-900"
         >
           {/* Error Message */}
           {error && (
@@ -157,67 +145,41 @@ export default function LoginForm() {
         </div>
 
         {/* Social Login Buttons */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="pt-6">
           <button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={socialLoading !== null}
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={socialLoading}
+            className="w-full flex items-center justify-center gap-3 border-2 border-purple-300 dark:border-purple-700 text-gray-900 dark:text-white font-medium py-3.5 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/30 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {socialLoading === "google" ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-blue-500"></div>
+            {socialLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-purple-600"></div>
             ) : (
               <>
                 <FcGoogle size={24} />
-                <span className="hidden sm:inline">Google</span>
-              </>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={handleAppleLogin}
-            disabled={socialLoading !== null}
-            className="flex items-center justify-center gap-3 border-2 border-gray-200 text-gray-700 font-medium py-3.5 rounded-xl hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {socialLoading === "apple" ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-gray-700"></div>
-            ) : (
-              <>
-                <FaApple size={24} />
-                <span className="hidden sm:inline">Apple</span>
+                <span>Sign in with Google</span>
               </>
             )}
           </button>
         </div>
 
         {/* Sign Up Link */}
-        <p className="text-center text-sm text-gray-600 mt-8">
-          New to HabitFlow?{" "}
-          <Link href="/signup" className="text-purple-600 font-semibold hover:text-purple-700">
-            Create an account
+        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-6">
+          Don't have an account?{" "}
+          <Link href="/auth/signup" className="text-purple-600 dark:text-purple-400 font-semibold hover:text-purple-700 dark:hover:text-purple-300">
+            Sign up
           </Link>
         </p>
-
+        
         {/* Footer Links */}
-        <div className="flex justify-center gap-4 mt-8 text-xs text-gray-500">
-          <Link href="#" className="hover:text-gray-700 transition-colors">
-            Privacy Policy
+        <div className="flex justify-center gap-4 mt-6 text-xs text-gray-500 dark:text-gray-400">
+          <Link href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            Privacy
           </Link>
           <span>•</span>
-          <Link href="#" className="hover:text-gray-700 transition-colors">
-            Terms of Service
+          <Link href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            Terms
           </Link>
-        </div>
-
-        {/* Daily Insight */}
-        <div className="mt-10 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-5 flex gap-4 items-start border border-blue-100">
-          <span className="text-2xl flex-shrink-0">💡</span>
-          <div>
-            <p className="text-xs font-semibold text-gray-700">Daily Insight</p>
-            <p className="text-xs text-gray-600 mt-2">
-              "Consistency is the companion of success."
-            </p>
-          </div>
         </div>
       </div>
     </div>

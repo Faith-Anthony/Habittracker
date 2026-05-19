@@ -2,24 +2,36 @@
 
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { getTheme, setTheme, type Theme } from '@/lib/theme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setCurrentTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
-  const [theme, setCurrentTheme] = useState<Theme>('system');
 
   useEffect(() => {
+    // Get initial theme
+    const saved = localStorage.getItem('theme');
+    const isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setCurrentTheme(isDark ? 'dark' : 'light');
     setMounted(true);
-    const currentTheme = getTheme();
-    setCurrentTheme(currentTheme);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Update document
+    const html = document.documentElement;
+    if (theme === 'dark') {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme, mounted]);
 
   if (!mounted) return children;
 
   const toggleTheme = () => {
-    const newTheme: Theme = theme === 'dark' ? 'light' : 'dark';
-    setCurrentTheme(newTheme);
-    setTheme(newTheme);
+    setCurrentTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -27,7 +39,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       {children}
       <button
         onClick={toggleTheme}
-        className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white shadow-lg transition-all duration-300 hover:scale-110"
+        className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-lg transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label="Toggle theme"
         title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       >
