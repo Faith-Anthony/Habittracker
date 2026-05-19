@@ -52,7 +52,7 @@ export default function LandingPage() {
                 <circle cx="75" cy="50" r="1.5" fill="#F472B6" opacity="0.6" />
               </svg>
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="font-bold text-xl text-purple-600">
               HabitFlow
             </span>
           </div>
@@ -90,7 +90,12 @@ export default function LandingPage() {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <TypingAnimation text="Transform Your Life, One Habit at a Time" />
+            <TypingAnimation segments={[
+              { text: "Transform ", color: "purple" },
+              { text: "Your Life, ", color: "white" },
+              { text: "One Habit At A ", color: "purple" },
+              { text: "Time", color: "white" }
+            ]} />
           </h1>
           
           <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
@@ -101,23 +106,34 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+              className="px-8 py-4 bg-white text-purple-600 rounded-lg font-semibold hover:bg-purple-600 hover:text-white transition-all hover:scale-105 flex items-center gap-2"
             >
               Start Free <ArrowRight className="w-4 h-4" />
             </Link>
-            <button className="px-8 py-4 border-2 border-gray-700 text-white rounded-lg font-semibold hover:bg-gray-900 transition-all">
+            <button className="px-8 py-4 bg-purple-600 text-white rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-all">
               Watch Demo
             </button>
           </div>
 
           {/* Hero Image */}
           <LazyLoad className="rounded-2xl overflow-hidden shadow-2xl">
-            <div className="bg-gradient-to-br from-purple-900 to-gray-900 aspect-video flex items-center justify-center">
+            <div className="bg-gradient-to-br from-purple-900/20 to-gray-900 aspect-video flex items-center justify-center border border-purple-600/30 rounded-lg">
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Flame className="w-10 h-10 text-white" />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center gap-3 mb-6">
+                    <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center border border-purple-600">
+                      <CheckCircle className="w-8 h-8 text-purple-400" />
+                    </div>
+                    <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center border border-purple-600">
+                      <TrendingUp className="w-8 h-8 text-purple-400" />
+                    </div>
+                    <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center border border-purple-600">
+                      <Flame className="w-8 h-8 text-purple-400" />
+                    </div>
+                  </div>
+                  <p className="text-purple-300 font-semibold">Dashboard Preview</p>
+                  <p className="text-gray-400 text-sm">Track, analyze, and celebrate your habit streaks</p>
                 </div>
-                <p className="text-gray-300">Beautiful Dashboard Coming Soon</p>
               </div>
             </div>
           </LazyLoad>
@@ -292,7 +308,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <button className="w-full py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition">
-                  Start Free Trial
+                  Upgrade Now
                 </button>
               </div>
             </LazyLoad>

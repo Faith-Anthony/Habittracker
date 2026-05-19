@@ -3,24 +3,49 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export function TypingAnimation({ text }: { text: string }) {
-  const [displayText, setDisplayText] = useState("");
-  const [isComplete, setIsComplete] = useState(false);
+interface TextSegment {
+  text: string;
+  color: 'white' | 'purple';
+}
+
+export function TypingAnimation({ 
+  segments = [] 
+}: { 
+  segments?: TextSegment[]
+}) {
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const totalLength = segments.reduce((sum, seg) => sum + seg.text.length, 0);
+  const isComplete = displayIndex === totalLength;
 
   useEffect(() => {
-    if (displayText.length < text.length) {
+    if (displayIndex < totalLength) {
       const timer = setTimeout(() => {
-        setDisplayText(text.slice(0, displayText.length + 1));
+        setDisplayIndex(prev => prev + 1);
       }, 50);
       return () => clearTimeout(timer);
-    } else if (displayText.length === text.length) {
-      setIsComplete(true);
     }
-  }, [displayText, text]);
+  }, [displayIndex, totalLength]);
+
+  let currentPos = 0;
+  const renderedSegments = segments.map((segment, idx) => {
+    const segmentStart = currentPos;
+    const segmentEnd = currentPos + segment.text.length;
+    const displayLength = Math.max(0, Math.min(displayIndex - segmentStart, segment.text.length));
+    currentPos = segmentEnd;
+
+    return (
+      <span
+        key={idx}
+        className={segment.color === 'purple' ? 'text-purple-600' : 'text-white'}
+      >
+        {segment.text.slice(0, displayLength)}
+      </span>
+    );
+  });
 
   return (
-    <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
-      {displayText}
+    <span>
+      {renderedSegments}
       {!isComplete && (
         <motion.span
           animate={{ opacity: [1, 0] }}
