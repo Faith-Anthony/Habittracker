@@ -56,7 +56,7 @@ export default function SignupForm() {
         {/* Header with Logo */}
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center">
-            <div className="bg-white dark:bg-slate-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-2 border-purple-200 dark:border-purple-700">
+            <div className="bg-white dark:bg-slate-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-2 border-violet-200 dark:border-violet-700">
               <svg className="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 {/* Target/Growth circles */}
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.3" />
@@ -73,14 +73,14 @@ export default function SignupForm() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h1>
-          <p className="text-gray-600 dark:text-gray-300">Join thousands building better habits</p>
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">Create Account</h1>
+          <p className="text-slate-500 dark:text-slate-400">Join thousands building better habits</p>
         </div>
 
         {/* Signup Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 space-y-5 border border-purple-200 dark:border-purple-900"
+          className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8 space-y-5 border border-slate-200 dark:border-slate-800"
         >
           {/* Error Message */}
           {error && (
@@ -92,7 +92,7 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="fullName"
-              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
             >
               Full Name
             </label>
@@ -103,7 +103,7 @@ export default function SignupForm() {
               onChange={(e) => setFullName(e.target.value)}
               placeholder="John Doe"
               required
-              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
+              className="w-full px-4 py-2.5 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all"
             />
           </div>
 
@@ -111,7 +111,7 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
             >
               Email Address
             </label>
@@ -122,7 +122,7 @@ export default function SignupForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
+              className="w-full px-4 py-2.5 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all"
             />
           </div>
 
@@ -130,7 +130,7 @@ export default function SignupForm() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
             >
               Password
             </label>
@@ -141,9 +141,9 @@ export default function SignupForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full px-4 py-2.5 border-2 border-purple-300 dark:border-purple-700 dark:bg-slate-800 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 outline-none transition-all"
+              className="w-full px-4 py-2.5 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all"
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               At least 8 characters
             </p>
           </div>
@@ -152,7 +152,7 @@ export default function SignupForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 dark:from-purple-500 dark:to-purple-600 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-xl transition-all hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
@@ -160,9 +160,9 @@ export default function SignupForm() {
 
         {/* Divider */}
         <div className="my-6 flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
-          <span className="text-sm text-gray-500 dark:text-gray-400">or</span>
-          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
+          <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+          <span className="text-sm text-slate-500 dark:text-slate-400">or</span>
+          <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
         </div>
 
         {/* Google Signup Button */}
@@ -170,10 +170,10 @@ export default function SignupForm() {
           type="button"
           onClick={handleGoogleSignup}
           disabled={socialLoading}
-          className="w-full flex items-center justify-center gap-3 border-2 border-purple-300 dark:border-purple-700 text-gray-900 dark:text-white font-medium py-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-medium py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {socialLoading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-purple-600"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-violet-600"></div>
           ) : (
             <>
               <FcGoogle size={24} />
@@ -183,9 +183,9 @@ export default function SignupForm() {
         </button>
 
         {/* Sign In Link */}
-        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-6">
+        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-purple-600 dark:text-purple-400 font-semibold hover:text-purple-700 dark:hover:text-purple-300">
+          <Link href="/auth/login" className="text-violet-600 dark:text-violet-400 font-semibold hover:text-violet-700 dark:hover:text-violet-300">
             Sign in
           </Link>
         </p>
