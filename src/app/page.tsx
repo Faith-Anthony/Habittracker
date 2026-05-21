@@ -75,6 +75,71 @@ function Logo({ size = 32 }: { size?: number }) {
   );
 }
 
+const TESTIMONIALS = [
+  { name: "Alex Morgan", role: "Fitness coach", avatar: "AM", text: "HabitFlow transformed how I work with clients. The streak system is addictively motivating and the AI insights actually help.", badge: "21-day streak" },
+  { name: "Sarah Chen", role: "PhD student", avatar: "SC", text: "I went from scattered study sessions to 90%+ weekly completion. The analytics showed I'm sharpest between 8-10am.", badge: "90% completion" },
+  { name: "James Wilson", role: "Startup founder", avatar: "JW", text: "The dashboard is calm and focused — not overwhelming. It doesn't get in the way. Exactly what a busy person needs.", badge: "45-day streak" },
+  { name: "Priya Sharma", role: "Product designer", avatar: "PS", text: "I've tried every habit app out there. HabitFlow is the only one I've stuck with past the first week. The UI just gets out of your way.", badge: "30-day streak" },
+  { name: "Daniel Kim", role: "Software engineer", avatar: "DK", text: "The heatmap view is incredible. Seeing my consistency visually over months is exactly the long-term motivation I needed.", badge: "60-day streak" },
+];
+
+function TestimonialsCarousel() {
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDirection(1);
+      setIndex((i) => (i + 1) % TESTIMONIALS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const t = TESTIMONIALS[index];
+
+  return (
+    <div className="relative overflow-hidden" style={{ minHeight: 220 }}>
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={index}
+          custom={direction}
+          initial={{ opacity: 0, x: direction * 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: direction * -60 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col"
+        >
+          <div className="flex gap-1 mb-4">
+            {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
+          </div>
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1 mb-6">"{t.text}"</p>
+          <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="w-9 h-9 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center text-xs font-bold text-violet-600 dark:text-violet-400 flex-shrink-0">{t.avatar}</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.name}</p>
+              <p className="text-xs text-slate-500">{t.role}</p>
+            </div>
+            <div className="text-xs text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 flex-shrink-0">
+              <Flame className="w-3 h-3" />{t.badge}
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      {/* Dot indicators */}
+      <div className="flex justify-center gap-1.5 mt-5">
+        {TESTIMONIALS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? "w-6 bg-violet-500" : "w-1.5 bg-slate-300 dark:bg-slate-700"}`}
+            aria-label={`Go to testimonial ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -85,8 +150,8 @@ export default function LandingPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true });
-  const users = useCounter(12400, 2000, statsInView);
-  const habits = useCounter(284000, 2200, statsInView);
+  const users = useCounter(1240, 2000, statsInView);
+  const habits = useCounter(18600, 2200, statsInView);
   const retention = useCounter(91, 1800, statsInView);
 
   useEffect(() => {
@@ -171,9 +236,9 @@ export default function LandingPage() {
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-5 leading-tight tracking-tight">
               <TypingAnimation segments={[
                 { text: "Transform ", color: "purple" },
-                { text: "Your Life, ", color: "white" },
-                { text: "One Habit", color: "purple" },
-                { text: " At A Time", color: "white" },
+                { text: "your life, ", color: "white" },
+                { text: "one habit", color: "purple" },
+                { text: " at a time", color: "white" },
               ]} />
             </h1>
             <p className="text-base sm:text-lg text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -336,39 +401,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS — light */}
-      <section id="testimonials" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-[#0d1220]">
-        <div className="max-w-6xl mx-auto">
+      {/* TESTIMONIALS — light, auto-rotating carousel */}
+      <section id="testimonials" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-[#0d1220] overflow-hidden">
+        <div className="max-w-2xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-3">Loved by achievers</h2>
             <p className="text-slate-500 dark:text-slate-400">Real people building real habits, day by day.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { name: "Alex Morgan", role: "Fitness coach", avatar: "AM", text: "HabitFlow transformed how I work with clients. The streak system is addictively motivating and the AI insights actually help.", badge: "21-day streak" },
-              { name: "Sarah Chen", role: "PhD student", avatar: "SC", text: "I went from scattered study sessions to 90%+ weekly completion. The analytics showed I'm sharpest between 8-10am.", badge: "90% completion" },
-              { name: "James Wilson", role: "Startup founder", avatar: "JW", text: "The dashboard is calm and focused — not overwhelming. It doesn't get in the way. Exactly what a busy person needs.", badge: "45-day streak" },
-            ].map((t, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-200 h-full flex flex-col">
-                  <div className="flex gap-1 mb-4">
-                    {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1 mb-5">"{t.text}"</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <div className="w-9 h-9 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center text-xs font-bold text-violet-600 dark:text-violet-400 flex-shrink-0">{t.avatar}</div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.name}</p>
-                      <p className="text-xs text-slate-500">{t.role}</p>
-                    </div>
-                    <div className="text-xs text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 flex-shrink-0">
-                      <Flame className="w-3 h-3" />{t.badge}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <TestimonialsCarousel />
         </div>
       </section>
 
@@ -376,7 +416,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-950">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-3">Simple, honest pricing</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-3">Plans & pricing</h2>
             <p className="text-slate-500 dark:text-slate-400">Start free. Upgrade when you're ready.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-5 items-center">
@@ -452,17 +492,19 @@ export default function LandingPage() {
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">Join the waitlist</h2>
           <p className="text-slate-400 mb-10">Be the first to get AI insights, team features, and early-bird pricing.</p>
-          <form onSubmit={handleWaitlist} className="flex flex-col gap-3">
-            <input type="text" placeholder="Your name (optional)" value={waitlistName} onChange={(e) => setWaitlistName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
-            <input type="email" placeholder="you@example.com" value={waitlistEmail} onChange={(e) => setWaitlistEmail(e.target.value)} required
-              className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
-            <button type="submit" disabled={waitlistLoading}
-              className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white rounded-xl font-semibold text-sm transition-colors">
-              {waitlistLoading ? "Joining..." : "Join waitlist"}
-            </button>
-          </form>
-          <p className="text-xs text-slate-700 mt-4">No spam. Unsubscribe any time.</p>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+            <form onSubmit={handleWaitlist} className="flex flex-col gap-3">
+              <input type="text" placeholder="Your name (optional)" value={waitlistName} onChange={(e) => setWaitlistName(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
+              <input type="email" placeholder="you@example.com" value={waitlistEmail} onChange={(e) => setWaitlistEmail(e.target.value)} required
+                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
+              <button type="submit" disabled={waitlistLoading}
+                className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white rounded-xl font-semibold text-sm transition-colors">
+                {waitlistLoading ? "Joining..." : "Join waitlist"}
+              </button>
+            </form>
+            <p className="text-xs text-slate-600 mt-4">No spam. Unsubscribe any time.</p>
+          </div>
         </div>
       </section>
 
