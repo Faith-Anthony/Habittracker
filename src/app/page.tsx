@@ -29,11 +29,10 @@ function useCounter(end: number, duration = 2000, active = true) {
   return count;
 }
 
-function FAQItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
+function FAQItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
     <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-      <button onClick={() => setOpen(!open)}
+      <button onClick={onToggle}
         className="w-full flex items-center justify-between p-5 text-left bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
         <span className="font-medium text-slate-900 dark:text-slate-100 pr-4 text-sm sm:text-base">{q}</span>
         <ChevronDown className={`w-4 h-4 text-violet-500 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
@@ -83,6 +82,7 @@ export default function LandingPage() {
   const [waitlistEmail, setWaitlistEmail] = useState("");
   const [waitlistLoading, setWaitlistLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true });
   const users = useCounter(12400, 2000, statsInView);
@@ -436,7 +436,10 @@ export default function LandingPage() {
               { q: "Does it work offline?", a: "Yes. HabitFlow is a Progressive Web App with local caching. You can log habits offline and everything syncs automatically when you reconnect." },
               { q: "How do I cancel Pro?", a: "Cancel any time from your account settings. You keep Pro features until the end of your billing period, then revert to Free." },
               { q: "Is my data private?", a: "Your data is stored securely via Supabase (SOC 2 Type II compliant), encrypted in transit and at rest. We never sell or share your personal data." },
-            ].map((item, i) => <FAQItem key={i} q={item.q} a={item.a} />)}
+            ].map((item, i) => {
+              const [openFaq, setOpenFaq] = [openFaqIndex === i, () => setOpenFaqIndex(openFaqIndex === i ? null : i)];
+              return <FAQItem key={i} q={item.q} a={item.a} open={openFaq} onToggle={setOpenFaq} />;
+            })}
           </div>
         </div>
       </section>
