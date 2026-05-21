@@ -147,8 +147,8 @@ export default function LandingPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true });
-  const users = useCounter(1240, 2000, statsInView);
-  const habits = useCounter(18600, 2200, statsInView);
+  const users = useCounter(100, 2000, statsInView);
+  const habits = useCounter(2400, 2200, statsInView);
   const retention = useCounter(91, 1800, statsInView);
 
   useEffect(() => {
@@ -228,7 +228,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-medium mb-8">
               <Flame className="w-3.5 h-3.5" />
-              AI-powered habit tracking for focused people
+              Track habits, build streaks, stay consistent
             </div>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-5 leading-tight tracking-tight">
               <TypingAnimation segments={[
@@ -255,11 +255,11 @@ export default function LandingPage() {
             className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-14">
             {[
               { v: users.toLocaleString() + "+", l: "Active users" },
-              { v: Math.floor(habits / 1000) + "K+", l: "Habits tracked" },
+              { v: habits.toLocaleString() + "+", l: "Habits tracked" },
               { v: retention + "%", l: "Streak retention" },
             ].map((s, i) => (
               <div key={i} className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3">
-                <div className="text-xl sm:text-2xl font-bold text-violet-400">{s.v}</div>
+                <div className="text-xl sm:text-2xl font-bold text-white">{s.v}</div>
                 <div className="text-xs text-slate-500 mt-0.5">{s.l}</div>
               </div>
             ))}
@@ -485,16 +485,16 @@ export default function LandingPage() {
       <section id="waitlist" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-950">
         <div className="max-w-lg mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-medium mb-8">
-            <Zap className="w-3.5 h-3.5" />Pro features launching soon
+            <Zap className="w-3.5 h-3.5" />Coming soon
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">Join the waitlist</h2>
-          <p className="text-slate-400 mb-10">Be the first to get AI insights, team features, and early-bird pricing.</p>
+          <p className="text-slate-400 mb-10">Be among the first to try HabitFlow. We'll notify you when we're ready.</p>
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
             <form onSubmit={handleWaitlist} className="flex flex-col gap-3">
               <input type="text" placeholder="Your name (optional)" value={waitlistName} onChange={(e) => setWaitlistName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
+                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20 outline-none text-sm transition-colors" />
               <input type="email" placeholder="you@example.com" value={waitlistEmail} onChange={(e) => setWaitlistEmail(e.target.value)} required
-                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none text-sm transition-colors" />
+                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-600 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20 outline-none text-sm transition-colors" />
               <button type="submit" disabled={waitlistLoading}
                 className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white rounded-xl font-semibold text-sm transition-colors">
                 {waitlistLoading ? "Joining..." : "Join waitlist"}
@@ -528,9 +528,8 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div className="border-t border-slate-800/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+          <div className="border-t border-slate-800/60 pt-8 text-center text-xs text-slate-600">
             <p>&#169; 2026 HabitFlow. All rights reserved.</p>
-            <p>Built with Next.js, Supabase &amp; Framer Motion</p>
           </div>
         </div>
       </footer>
