@@ -115,12 +115,9 @@ function TestimonialsCarousel() {
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1 mb-6">"{t.text}"</p>
           <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <div className="w-9 h-9 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center text-xs font-bold text-violet-600 dark:text-violet-400 flex-shrink-0">{t.avatar}</div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
               <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.name}</p>
               <p className="text-xs text-slate-500">{t.role}</p>
-            </div>
-            <div className="text-xs text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 flex-shrink-0">
-              <Flame className="w-3 h-3" />{t.badge}
             </div>
           </div>
         </motion.div>
@@ -321,8 +318,8 @@ export default function LandingPage() {
             ].map((f, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, delay: i * 0.06 }}>
                 <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-200 h-full group">
-                  <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center mb-4 group-hover:bg-violet-200 dark:group-hover:bg-violet-900/60 transition-colors">
-                    <f.icon className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                  <div className="w-10 h-10 rounded-lg bg-slate-800 dark:bg-slate-700 flex items-center justify-center mb-4 group-hover:bg-slate-700 dark:group-hover:bg-slate-600 transition-colors">
+                    <f.icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1.5">{f.title}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{f.desc}</p>
